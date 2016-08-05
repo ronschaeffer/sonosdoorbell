@@ -51,12 +51,12 @@ for zp in doorbellgroup:
 # Build descriptor list for each doorbell group player for later processing & restoration
 for zp in doorbellgroup:
 	print("\nGetting current group state of " + zp.player_name + "\n")
-	zp.groupstatus = [zp,													# 0 player object
+	zp.groupstatus = [zp,								# 0 player object
 		bool(len(set(zp.group.members) - set(invisiblezones)) != 1),		# 1 in a group? (can't rely on boolean return from Snapshot, because invisible players are included in group/non-group status)
-		zp.is_coordinator,													# 2 is coordinator?
-		zp.group.coordinator,												# 3 curent coordinator object
-		bool(set(zp.group.members) & set(nondoorbellgroup)),				# 4 heterogeneous group? (made up of both doorbell and non-doorbell players)
-		(list(set(nondoorbellgroup) & set(zp.group.members)) + [False])[0]  # 5 First non-doorbell group member from list; Blank if only doorbellgroup members
+		zp.is_coordinator,							# 2 is coordinator?
+		zp.group.coordinator,							# 3 curent coordinator object
+		bool(set(zp.group.members) & set(nondoorbellgroup)),			# 4 heterogeneous group? (made up of both doorbell and non-doorbell players)
+		(list(set(nondoorbellgroup) & set(zp.group.members)) + [False])[0]	# 5 First non-doorbell group member from list; Blank if only doorbellgroup members
 		]
 
 		
@@ -118,18 +118,18 @@ for zp in doorbellgroup:
 # Restore groups based on zp.groupstatus descriptor list of original group state
 print("\nRestoring groups...")
 for zp in doorbellgroup:
-	if zp.groupstatus[1] == False:												# Loner
-		pass																	#### Do nothing; was not in a group
-	elif zp.groupstatus[2] == False and zp.groupstatus[4] == False:				# Homog group slave
-		zp.join(zp.groupstatus[3])												##### Rejoin to original coord
-	elif zp.groupstatus[2] == True and zp.groupstatus[4] == False:				# Homog group coord
-		pass																	#### Do nothing; slaves are rejoined above
-	elif zp.groupstatus[2] == True and zp.groupstatus[4] == True:				# Former coord of heterog group
-		zp.join(zp.groupstatus[5].group.coordinator)							##### Query new coord of non-doorbell group member & rejoin to it
+	if zp.groupstatus[1] == False:							# Loner
+		pass									#### Do nothing; was not in a group
+	elif zp.groupstatus[2] == False and zp.groupstatus[4] == False:			# Homog group slave
+		zp.join(zp.groupstatus[3])						##### Rejoin to original coord
+	elif zp.groupstatus[2] == True and zp.groupstatus[4] == False:			# Homog group coord
+		pass									#### Do nothing; slaves are rejoined above
+	elif zp.groupstatus[2] == True and zp.groupstatus[4] == True:			# Former coord of heterog group
+		zp.join(zp.groupstatus[5].group.coordinator)				##### Query new coord of non-doorbell group member & rejoin to it
 	elif zp.groupstatus[2] == False and zp.groupstatus[3] not in doorbellgroup:	# Slave in heterog group with non-doorbell coord
-		zp.join(zp.groupstatus[3])												#### Rejoin to original coord
-	else:																		# Slave in heterog group with doorbell coord
-		zp.join(zp.groupstatus[5].group.coordinator)							#### Query new coord of non-doorbell group member & rejoin to it
+		zp.join(zp.groupstatus[3])						#### Rejoin to original coord
+	else:										# Slave in heterog group with doorbell coord
+		zp.join(zp.groupstatus[5].group.coordinator)				#### Query new coord of non-doorbell group member & rejoin to it
 
 # Finish
 print("\nDoorbell Player finished.\n")

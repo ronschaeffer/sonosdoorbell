@@ -1,5 +1,5 @@
 # sonosdoorbell
-Second phase of doorbell project - Playing doorbell through selected Sonos zones
+Second phase of doorbell project - Playing doorbell through selected Sonos zones with ***group snapshot and restoration***
 
 Builds on soco project https://github.com/SoCo/SoCo project, by adding zone group status snapshotting and restoration to complement the soco shapshot/restore fucntions.
 
